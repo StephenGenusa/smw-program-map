@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/StephenGenusa/smw-program-map/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/StephenGenusa/smw-program-map"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="Platforms: Linux, Windows, macOS" src="https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg">
   <img alt="Electron 45" src="https://img.shields.io/badge/electron-45-47848F.svg?logo=electron&logoColor=white">
@@ -61,13 +62,15 @@ pins, and click a signal to see every place it appears.
 
 ## Install
 
-There is no published release yet. To run the app, see [Building from source](#building-from-source).
+Download the file for your system from the [latest release](https://github.com/StephenGenusa/smw-program-map/releases/latest).
 
 | System | File | Notes |
 | --- | --- | --- |
 | Linux (x64) | `smw-program-map-<version>.AppImage` | `chmod +x` it and run it. No install needed. |
 | Windows (x64) | `smw-program-map-<version>-setup.exe` | Unsigned unless built with a certificate: SmartScreen asks once (*More info*, then *Run anyway*). |
-| macOS | `.dmg` and `.zip`, for Apple Silicon and Intel | Not notarized unless built with Apple credentials: right-click the app and choose *Open* the first time. |
+| macOS (x64) | `smw-program-map-<version>-mac-x64.zip` | Unzip and move the app to Applications. It is not notarized: right-click it and choose *Open* the first time. |
+
+Each release lists the SHA-256 of every file.
 
 ## Using it
 
