@@ -1,5 +1,6 @@
 import { _electron as electron, expect, test, type ElectronApplication, type Page } from '@playwright/test';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const root = join(import.meta.dirname, '..');
@@ -105,4 +106,30 @@ test('captures the view and the overview as PNG', async () => {
     expect(s.head).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
     expect(s.name).toMatch(/\.png$/);
   }
+});
+
+test('watching a file delivers each save to the page', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'smw-e2e-'));
+  const file = join(dir, 'a.smw');
+  writeFileSync(file, 'one');
+  try {
+    await page.evaluate((path) => {
+      (window as unknown as { got: Promise<unknown> }).got = new Promise((ok) =>
+        window.api.onFileChanged((p, bytes) => ok({ p, text: new TextDecoder().decode(bytes) })),
+      );
+      return window.api.watchFile(path);
+    }, file);
+    writeFileSync(file, 'two!');
+    const got = await page.evaluate(() => (window as unknown as { got: Promise<unknown> }).got);
+    expect(got).toEqual({ p: file, text: 'two!' });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('auto-reload stays off for a file with no path on disk', async () => {
+  await expect(page.locator('#autoreload')).toBeDisabled();
+  await drop([item('example.smw', EXAMPLE)]);
+  await expect(page.locator('#title')).not.toBeEmpty();
+  await expect(page.locator('#autoreload')).toBeDisabled();
 });

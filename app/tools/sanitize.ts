@@ -5,7 +5,6 @@ import { pathToFileURL } from 'node:url';
 import { readBlocks, decode } from '../src/core/blocks';
 import type { RawBlock } from '../src/core/types';
 
-const SAFE_NAME = /^[A-Z0-9][A-Za-z0-9 ()/_.-]*$/;
 const SYMBOL_KEY = /^(H|PrH|SmC|mI|mO|DvH|OpF|C[0-9]+|mC|I[0-9]+|O[0-9]+)$/;
 
 function symbolName(b: RawBlock): string | null {
@@ -13,8 +12,7 @@ function symbolName(b: RawBlock): string | null {
   const code = b.get('SmC');
   if (code === '156' || code === '157') return null;
   if (code === '155' || code === '103') return `module_${h}`;
-  const nm = b.get('Nm');
-  return nm && SAFE_NAME.test(nm) ? nm : `symbol_${h}`;
+  return `symbol_${h}`;
 }
 
 function write(entries: [string, string][]): string {

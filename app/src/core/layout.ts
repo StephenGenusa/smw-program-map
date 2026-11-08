@@ -37,7 +37,8 @@ export function pinRows(n: MapNode): number {
 
 function shelf(ids: number[], sizes: Map<number, Size>): { at: Offsets; size: Size } {
   const area = ids.reduce((a, id) => a + (sizes.get(id)!.w + GAP) * (sizes.get(id)!.h + GAP), 0);
-  const widest = Math.max(0, ...ids.map((id) => sizes.get(id)!.w));
+  let widest = 0;
+  for (const id of ids) widest = Math.max(widest, sizes.get(id)!.w);
   const limit = Math.max(widest, Math.sqrt(area * 1.5));
   const at: Offsets = new Map();
   let x = 0;

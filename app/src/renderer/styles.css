@@ -4,6 +4,7 @@
 html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); }
 body { display: flex; flex-direction: column; }
 header { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+#autoreload-label { display: flex; gap: 4px; align-items: center; white-space: nowrap; }
 #title { font-weight: 600; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #progress { color: #b45309; }
 input, header button { font: inherit; padding: 4px 9px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: inherit; }

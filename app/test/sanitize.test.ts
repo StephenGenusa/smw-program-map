@@ -32,8 +32,13 @@ describe('sanitize', () => {
     expect(p.signals.get(4)!.name).toBe('sig_4');
     expect(p.nodes.get(1)!.name).toBe('folder_1');
     expect(p.nodes.get(10)!.name).toBe('module_10');
-    expect(p.nodes.get(11)!.name).toBe('DM-MD8x8');
+    expect(p.nodes.get(11)!.name).toBe('symbol_11');
     expect(p.nodes.get(12)!.name).toBe('symbol_12');
+  });
+  it.each(['SMITH RESIDENCE TV', 'ACME Boardroom DSP', 'SMITH-TV2'])('never copies the symbol name %s', (name) => {
+    const text = sanitize([b({ ObjTp: 'Sm', H: 30, SmC: 20, Nm: name })]);
+    expect(text).not.toContain(name);
+    expect(buildProgram(readBlocks(text), 'x').nodes.get(30)!.name).toBe('symbol_30');
   });
   it('preserves structure', () => {
     const a = buildProgram(input, 'x');

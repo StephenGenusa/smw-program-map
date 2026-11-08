@@ -19,6 +19,8 @@ const empty = document.querySelector<HTMLElement>('#empty')!;
 const progress = document.querySelector<HTMLElement>('#progress')!;
 let current: Loaded | null = null;
 let fileName = 'program';
+let openedPath: string | null = null;
+const autoReload = document.querySelector<HTMLInputElement>('#autoreload')!;
 
 const STAGE_TEXT = { parse: 'Reading', connect: 'Connecting', layout: 'Arranging' };
 
@@ -54,17 +56,32 @@ const searchBox = new SearchBox({
 view.onSignalClick = selectSignal;
 view.onClear = clearOccurrences;
 installToolbar(view, () => fileName);
-installDropZone(open);
+installDropZone(async (file) => {
+  if (!(await open(file))) return;
+  openedPath = window.api.pathFor(file) || null;
+  autoReload.disabled = openedPath === null;
+  if (openedPath === null) autoReload.checked = false;
+  syncWatch();
+});
 setToolbarEnabled(false);
+autoReload.onchange = syncWatch;
+window.api.onFileChanged((path, bytes) => {
+  if (path === openedPath) void open(new File([bytes as BlobPart], fileName), true);
+});
 
-async function open(file: File): Promise<void> {
+function syncWatch(): void {
+  void window.api.watchFile(autoReload.checked ? openedPath : null);
+}
+
+/** Resolves to whether the file is now showing. A reload keeps the user's place on the map. */
+async function open(file: File, reload = false): Promise<boolean> {
   clearMessage();
   progress.hidden = false;
   progress.textContent = 'Reading…';
   const result = await loadFile(file, (stage, done, total) => {
     progress.textContent = stage === 'layout' && total > 1 ? `${STAGE_TEXT[stage]} ${Math.round((done / total) * 100)}%` : `${STAGE_TEXT[stage]}…`;
   });
-  if (result === 'superseded') return;
+  if (result === 'superseded') return false;
   progress.hidden = true;
   if (result.status === 'protected') {
     showMessage(`${result.name ? `${result.name}: ` : ''}This file is protected and can't be displayed.`);
@@ -77,7 +94,9 @@ async function open(file: File): Promise<void> {
     empty.hidden = true;
     clearOccurrences();
     setToolbarEnabled(true);
-    await view.show(result);
+    await view.show(result, { keepView: reload });
     searchBox.setIndex(buildIndex(result.program));
+    return true;
   }
+  return false;
 }

@@ -3,8 +3,8 @@ import type { MapNode, NodeKind, Pin, PinAt, Program, RawBlock, Signal, SignalKi
 
 const PIN_KEY = /^([IO])([0-9]+)$/;
 const CHILD_KEY = /^C([0-9]+)$/;
-const CONSTANTS: Record<string, Pin['constant']> = { '1': '0', '2': '1', '3': 'local' };
-const SIGNAL_KINDS: Record<string, SignalKind> = { '2': 'analog', '4': 'serial' };
+const CONSTANTS = new Map<string, Pin['constant']>([['1', '0'], ['2', '1'], ['3', 'local']]);
+const SIGNAL_KINDS = new Map<string, SignalKind>([['2', 'analog'], ['4', 'serial']]);
 
 export const isBox = (n: MapNode): boolean => n.children.length > 0;
 
@@ -27,7 +27,7 @@ function pinsOf(b: RawBlock, signals: Map<number, Signal>): Pin[] {
     const m = PIN_KEY.exec(key);
     if (!m) continue;
     const id = Number(value);
-    const constant = CONSTANTS[value] ?? null;
+    const constant = CONSTANTS.get(value) ?? null;
     pins.push({
       side: m[1] === 'I' ? 'in' : 'out',
       index: Number(m[2]),
@@ -71,7 +71,7 @@ export function buildProgram(blocks: RawBlock[], fileName: string): Program {
   for (const b of blocks) {
     if (b.get('ObjTp') !== 'Sg' || !b.has('H')) continue;
     const id = Number(b.get('H'));
-    signals.set(id, { id, name: b.get('Nm') || String(id), kind: SIGNAL_KINDS[b.get('SgTp') ?? ''] ?? 'digital' });
+    signals.set(id, { id, name: b.get('Nm') || String(id), kind: SIGNAL_KINDS.get(b.get('SgTp') ?? '') ?? 'digital' });
   }
 
   const raw = new Map<number, RawBlock>();

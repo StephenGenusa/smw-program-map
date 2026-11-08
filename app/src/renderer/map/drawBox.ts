@@ -1,11 +1,9 @@
-import type { Rect } from '../../core/layout';
+import { HEADER_H, type Rect } from '../../core/layout';
 import type { MapNode } from '../../core/types';
 import type { Detail } from './detail';
 import type { Scene } from './scene';
 import { KIND_STYLE, TEXT } from './theme';
 import { sx, sy, type Transform } from './view';
-
-const HEADER = 24;
 
 /** The body and title shared by boxes and symbols. */
 export function drawBody(s: Scene, n: MapNode, r: Rect, t: Transform, detail: Detail, alpha: number): void {
@@ -17,9 +15,9 @@ export function drawBody(s: Scene, n: MapNode, r: Rect, t: Transform, detail: De
   const dim = n.disabled ? alpha * 0.45 : alpha;
   s.shapes.rect(x, y, w, h).fill({ color: style.fill, alpha: dim }).stroke({ color: style.border, width: style.width, alpha: dim });
   if (detail === 'box' && !n.children.length) return;
-  const headerH = Math.min(HEADER * t.k, h);
+  const headerH = Math.min(HEADER_H * t.k, h);
   s.shapes.rect(x, y, w, headerH).fill({ color: style.header, alpha: dim });
-  const px = Math.max(11, Math.min(HEADER * t.k * 0.6, 18));
+  const px = Math.max(11, Math.min(HEADER_H * t.k * 0.6, 18));
   if (headerH >= px) {
     if (w > 60) s.text(n.name, x + 5, y + (headerH - px) / 2, px, TEXT, dim, w - 10);
   } else if (n.children.length && w > 90 && h > 34) {

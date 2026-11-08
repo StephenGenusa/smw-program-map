@@ -1,8 +1,8 @@
 import 'pixi.js/unsafe-eval';
 import { Application, Graphics, Rectangle } from 'pixi.js';
-import { boxPath, ROOT_BOX, tagText, type Connections, type PinKey } from '../../core/connections';
+import { boxPath, keyOf, ROOT_BOX, tagText } from '../../core/connections';
 import { HEADER_H, ROW_H, PIN_PREVIEW, type Layout, type Rect } from '../../core/layout';
-import { chooseOverviewDepth } from '../../core/overview';
+import { chooseOverviewDepth, overviewFilter } from '../../core/overview';
 import type { MapNode, Program } from '../../core/types';
 import type { LoadResult } from '../../worker/pipeline';
 import { detailFor, nodeTitle, visibleNodes } from './detail';
@@ -55,13 +55,14 @@ export class MapView {
       });
   }
 
-  async show(r: Loaded): Promise<void> {
+  async show(r: Loaded, options: { keepView?: boolean } = {}): Promise<void> {
     await this.ready;
+    cancelAnimationFrame(this.animation);
     this.data = r;
     this.litSignal = null;
     this.litNodes = null;
     this.closeList();
-    this.view = this.fit(this.bounds(r.layout));
+    if (!options.keepView) this.view = this.fit(this.bounds(r.layout));
     this.schedule();
   }
 
@@ -184,12 +185,14 @@ export class MapView {
   private paint(s: Scene, t: Transform, world: Rect, opts: PaintOptions): void {
     const { program: p, connections: c, layout: l } = this.data!;
     s.begin();
+    const keep = opts.maxDepth === undefined ? null : overviewFilter(p, opts.maxDepth);
+    const lit = opts.maxDepth === undefined ? this.litNodes : null;
     const depthOf = new Map<number, number>();
     const visible = visibleNodes(p, l, world, MIN_DRAWN_PX / t.k).filter((id) => {
       const n = p.nodes.get(id)!;
       const depth = n.parent === null ? 1 : (depthOf.get(n.parent) ?? 0) + 1;
       depthOf.set(id, depth);
-      return opts.maxDepth === undefined || (depth <= opts.maxDepth && n.children.length > 0);
+      return !keep || keep(n, depth);
     });
     const shown = new Set(visible);
     const fullDetail = (n: MapNode) => opts.maxDepth === undefined && detailFor(l.get(n.id)!.w * t.k) === 'full';
@@ -197,7 +200,7 @@ export class MapView {
     for (const id of visible) {
       const n = p.nodes.get(id)!;
       const r = l.get(id)!;
-      const alpha = this.litNodes && !this.litNodes.has(id) ? 0.22 : 1;
+      const alpha = lit && !lit.has(id) ? 0.22 : 1;
       const detail = opts.maxDepth !== undefined ? 'box' : detailFor(r.w * t.k);
       drawBody(s, n, r, t, detail, alpha);
       if (fullDetail(n)) drawPins(s, p, c, n, r, t, alpha, this.litSignal, true);
@@ -224,10 +227,9 @@ export class MapView {
     const all = occurrences(p, signalId);
     const hub = all.find((o) => o.pin.side === 'out') ?? all[0];
     if (!hub) return;
-    const key = (o: (typeof all)[number]): PinKey => ({ nodeId: o.nodeId, side: o.pin.side, index: o.pin.index });
-    const a = pinPoint(p, l, key(hub), t);
+    const a = pinPoint(p, l, keyOf(hub), t);
     for (const o of all.slice(0, MAX_HIGHLIGHT_CURVES)) {
-      if (o !== hub) curve(s, a, pinPoint(p, l, key(o), t), HIGHLIGHT, 2, 0.9);
+      if (o !== hub) curve(s, a, pinPoint(p, l, keyOf(o), t), HIGHLIGHT, 2, 0.9);
     }
   }
 
@@ -237,6 +239,7 @@ export class MapView {
     el.addEventListener('wheel', (e) => {
       e.preventDefault();
       cancelAnimationFrame(this.animation);
+      this.tip.style.display = 'none';
       const box = el.getBoundingClientRect();
       const mx = e.clientX - box.left;
       const my = e.clientY - box.top;
@@ -247,6 +250,9 @@ export class MapView {
       this.schedule();
     }, { passive: false, signal });
     el.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      cancelAnimationFrame(this.animation);
+      this.tip.style.display = 'none';
       this.drag = { x: e.clientX, y: e.clientY, moved: false };
       el.setPointerCapture(e.pointerId);
     }, { signal });
@@ -263,10 +269,15 @@ export class MapView {
       }
     }, { signal });
     el.addEventListener('pointerup', (e) => {
-      const moved = this.drag?.moved;
+      if (!this.drag) return;
+      const { moved } = this.drag;
       this.drag = null;
       if (!moved) this.click(e);
     }, { signal });
+    for (const ended of ['pointercancel', 'lostpointercapture'] as const) {
+      el.addEventListener(ended, () => { this.drag = null; }, { signal });
+    }
+    el.addEventListener('pointerleave', () => { this.tip.style.display = 'none'; }, { signal });
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.clearHighlight();

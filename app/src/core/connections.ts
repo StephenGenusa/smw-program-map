@@ -27,7 +27,7 @@ export interface Connections {
   linesByBox: Map<number, Line[]>;
 }
 
-const keyOf = (p: PinAt): PinKey => ({ nodeId: p.nodeId, side: p.pin.side, index: p.pin.index });
+export const keyOf = (p: PinAt): PinKey => ({ nodeId: p.nodeId, side: p.pin.side, index: p.pin.index });
 
 function push<K, V>(map: Map<K, V[]>, key: K, value: V): void {
   const list = map.get(key);
