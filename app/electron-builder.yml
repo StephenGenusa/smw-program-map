@@ -1,0 +1,41 @@
+appId: local.smw.programmap
+productName: SMW Program Map
+directories:
+  buildResources: build
+  output: dist
+# An allowlist: only what is named here is packaged. Sample programs and test
+# fixtures can hold customer data, and must not reach a package by omission.
+files:
+  - 'out/**'
+  - 'resources/**'
+  - 'package.json'
+  - '!**/*.map'
+win:
+  executableName: SMWProgramMap
+  icon: build/icon.ico
+  target:
+    - nsis
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+# No `target` here: scripts/build/build-macos.sh (on a Mac) asks for dmg and
+# zip, x64 and arm64; npm run build:mac (cross-built on Linux) for an x64 zip.
+mac:
+  icon: build/icon.png
+  category: public.app-category.developer-tools
+linux:
+  icon: build/icon.png
+  # Names the .desktop entry after `desktopName` in package.json, so a desktop
+  # can tie a running window to its launcher.
+  syncDesktopName: true
+  target:
+    - AppImage
+  category: Development
+appImage:
+  artifactName: ${name}-${version}.${ext}
+npmRebuild: false
+# Explicitly null: with no `publish` key electron-builder infers a provider
+# from the git remote and writes an app-update.yml into the package.
+publish: null

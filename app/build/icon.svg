@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc"><title id="title">SMW Program Map</title><desc id="desc">A program box whose two symbols are joined by crossing signal traces, on a dark teal field with an orbit.</desc>
+<defs>
+<radialGradient id="bg" cx=".5" cy=".42" r=".75"><stop stop-color="#0b2c35"/><stop offset="1" stop-color="#030a10"/></radialGradient>
+<linearGradient id="world" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#a5efe4"/><stop offset=".6" stop-color="#19cddd"/><stop offset="1" stop-color="#4bc5e8"/></linearGradient>
+<radialGradient id="glow"><stop stop-color="#19cddd" stop-opacity=".28"/><stop offset="1" stop-color="#19cddd" stop-opacity="0"/></radialGradient>
+<linearGradient id="cta" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b5fff0"/><stop offset="1" stop-color="#27cede"/></linearGradient>
+<clipPath id="clip"><rect x="16" y="16" width="992" height="992" rx="216"/></clipPath>
+</defs>
+<style>
+.signal{stroke-dasharray:6 58;animation:signal 5s linear infinite}
+.orb{animation:orbit 16s linear infinite;transform-origin:0 0}
+.breathe{animation:breathe 4s ease-in-out infinite}
+@keyframes signal{to{stroke-dashoffset:-256}}
+@keyframes orbit{to{transform:rotate(360deg)}}
+@keyframes breathe{50%{opacity:.45}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="16" y="16" width="992" height="992" rx="216" fill="url(#bg)" stroke="#17404b" stroke-width="6"/>
+<g clip-path="url(#clip)">
+<ellipse cx="512" cy="500" rx="520" ry="460" fill="url(#glow)"/>
+<g class="detail" transform="translate(512 512) rotate(-24) scale(1 .38)">
+<circle r="470" fill="none" stroke="#50cbd6" stroke-opacity=".65" stroke-width="5"/>
+<g class="orb"><circle cx="470" r="20" fill="#9af5e9"/><circle cx="-470" r="13" fill="#39c4d6"/></g>
+</g>
+<rect class="frame" x="176" y="216" width="672" height="592" rx="56" fill="#05232c" fill-opacity=".86" stroke="url(#world)" stroke-width="28"/>
+<path d="M176 272a56 56 0 0 1 56-56h560a56 56 0 0 1 56 56v48H176z" fill="url(#cta)"/>
+<g class="breathe detail" fill="#05232c"><circle cx="248" cy="268" r="17"/><circle cx="308" cy="268" r="17"/></g>
+<g class="trace" fill="none" stroke="#8fe4dd" stroke-width="16" stroke-linecap="round">
+<path d="M416 448C512 448 512 656 608 656"/><path d="M416 552H608"/><path d="M416 656C512 656 512 448 608 448"/>
+</g>
+<g class="detail signal" fill="none" stroke="#efffff" stroke-width="12" stroke-linecap="round">
+<path d="M416 448C512 448 512 656 608 656"/><path d="M416 552H608"/><path d="M416 656C512 656 512 448 608 448"/>
+</g>
+<rect class="block" x="240" y="384" width="176" height="336" rx="28" fill="#0e4a56" stroke="#72dbde" stroke-width="12"/>
+<rect class="block" x="608" y="384" width="176" height="336" rx="28" fill="#0e4a56" stroke="#72dbde" stroke-width="12"/>
+<g class="detail" fill="#b0f8ed"><circle cx="416" cy="448" r="26"/><circle cx="416" cy="552" r="26"/><circle cx="416" cy="656" r="26"/><circle cx="608" cy="448" r="26"/><circle cx="608" cy="552" r="26"/><circle cx="608" cy="656" r="26"/></g>
+</g>
+</svg>

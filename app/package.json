@@ -3,15 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "description": "Read-only zoomable map of SIMPL Windows programs",
+  "author": "Stephen Genusa",
+  "license": "MIT",
   "main": "out/main/index.js",
   "type": "module",
+  "desktopName": "smw-program-map.desktop",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
+    "postinstall": "install-electron",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "e2e": "electron-vite build && playwright test",
-    "package": "electron-vite build && electron-builder --linux"
+    "icon": "node build/make-icon.mjs",
+    "package": "npm run build:linux",
+    "build:unpack": "electron-vite build && electron-builder --dir",
+    "build:linux": "electron-vite build && electron-builder --linux",
+    "build:win": "electron-vite build && electron-builder --win",
+    "build:mac": "electron-vite build && electron-builder --mac dir && node scripts/build/zip-mac.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.0",
@@ -27,23 +39,5 @@
   },
   "dependencies": {
     "pixi.js": "^8.22.0"
-  },
-  "build": {
-    "appId": "local.smw.programmap",
-    "productName": "SMW Program Map",
-    "files": [
-      "out/**"
-    ],
-    "directories": {
-      "output": "dist"
-    },
-    "linux": {
-      "target": "AppImage",
-      "category": "Development"
-    },
-    "win": {
-      "target": "nsis"
-    },
-    "publish": null
   }
 }
