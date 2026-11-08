@@ -7,8 +7,7 @@ const files = readdirSync(OUT, { recursive: true, withFileTypes: true }).filter(
 const all = files.map((f) => readFileSync(f, 'latin1')).join('\n');
 const count = (needle: string) => all.split(needle).length - 1;
 const SOURCE = new URL('../src/', import.meta.url).pathname;
-const source = readdirSync(SOURCE, { recursive: true, withFileTypes: true }).filter((e) => e.isFile()).map((e) => readFileSync(join(e.parentPath, e.name), 'latin1')).join('
-');
+const source = readdirSync(SOURCE, { recursive: true, withFileTypes: true }).filter((e) => e.isFile()).map((e) => readFileSync(join(e.parentPath, e.name), 'latin1')).join('\n');
 
 describe('built app', () => {
   it('has no format reference', () => {
