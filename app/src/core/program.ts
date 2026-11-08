@@ -17,7 +17,7 @@ function kindOf(b: RawBlock): NodeKind {
 }
 
 function nameOf(b: RawBlock, kind: NodeKind, code: string, id: number): string {
-  const caption = kind === 'folder' ? (b.get('Cmn1') ?? '').split('||')[0] : '';
+  const caption = kind === 'folder' ? (b.get('Cmn1') ?? '').split('||')[0]!.replace(/\\+$/, '') : '';
   return caption || b.get('Nm') || label(code) || String(id);
 }
 

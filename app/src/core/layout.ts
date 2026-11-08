@@ -6,7 +6,7 @@ export const PIN_PREVIEW = 8;
 export const ELK_CHILD_LIMIT = 500;
 export const ROW_H = 16;
 export const HEADER_H = 24;
-export const SYMBOL_W = 240;
+export const SYMBOL_W = 360;
 const PAD = 16;
 const GAP = 24;
 

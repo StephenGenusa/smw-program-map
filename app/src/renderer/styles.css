@@ -1,0 +1,22 @@
+:root { color-scheme: light dark; --bg: #f4f4f1; --panel: #fff; --ink: #1f2933; --line: #d5d9de; font: 13px system-ui, sans-serif; }
+@media (prefers-color-scheme: dark) { :root { --bg: #1b1f24; --panel: #262b31; --ink: #e6e8eb; --line: #3b424a; } }
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); }
+body { display: flex; flex-direction: column; }
+header { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+#title { font-weight: 600; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#progress { color: #b45309; }
+input, header button { font: inherit; padding: 4px 9px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: inherit; }
+#search { width: 260px; }
+main { position: relative; flex: 1; min-height: 0; }
+#map { position: absolute; inset: 0; overflow: hidden; }
+#empty { position: absolute; inset: 24px; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--line); border-radius: 12px; font-size: 20px; opacity: .75; pointer-events: none; }
+#empty[hidden] { display: none; }
+#message { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); padding: 9px 16px; background: #1f2933; color: #fff; border-radius: 6px; }
+aside { position: absolute; top: 10px; right: 10px; width: 320px; max-height: calc(100% - 20px); display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+#results:not(:empty), #occurrences:not([hidden]) { pointer-events: auto; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px; max-height: 45vh; }
+aside h3 { margin: 4px 6px; font-size: 11px; text-transform: uppercase; opacity: .65; }
+aside button, .map-list button { display: block; width: 100%; text-align: left; border: 0; background: none; color: inherit; font: inherit; padding: 3px 6px; border-radius: 3px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; }
+aside button:hover, .map-list button:hover { background: #3b82f633; }
+.map-tip { display: none; position: absolute; z-index: 5; max-width: 420px; padding: 4px 8px; background: #1f2933; color: #fff; border-radius: 4px; font-size: 12px; white-space: pre-wrap; pointer-events: none; }
+.map-list { display: none; position: absolute; z-index: 4; width: 320px; max-height: 320px; overflow: auto; background: #fff; color: #1f2933; border: 1px solid #9aa5b1; border-radius: 6px; padding: 4px; }

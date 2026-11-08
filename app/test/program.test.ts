@@ -108,3 +108,7 @@ it('reads example.smw', () => {
 it('uses only the first line of a folder caption', () => {
   expect(build(sm({ H: 10, SmC: 156, Cmn1: 'Rack||1more' })).nodes.get(10)!.name).toBe('Rack');
 });
+
+it('drops trailing backslashes from a folder caption', () => {
+  expect(build(sm({ H: 10, SmC: 156, Cmn1: 'Audio\\\\' })).nodes.get(10)!.name).toBe('Audio');
+});

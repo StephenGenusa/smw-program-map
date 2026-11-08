@@ -6,6 +6,23 @@
     <title>SMW Program Map</title>
   </head>
   <body>
+    <header>
+      <span id="title"></span>
+      <span id="progress" hidden></span>
+      <input id="search" type="search" placeholder="Search symbols, types, signals" />
+      <button id="save">Save view</button>
+      <button id="copy">Copy view</button>
+      <button id="overview">Export overview</button>
+    </header>
+    <main>
+      <div id="map"></div>
+      <div id="empty">Drop an SMW, UMC or CMC file here</div>
+      <aside>
+        <div id="results"></div>
+        <div id="occurrences" hidden></div>
+      </aside>
+      <div id="message" hidden></div>
+    </main>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>
