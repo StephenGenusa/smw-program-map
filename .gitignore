@@ -75,3 +75,6 @@ app/node_modules/
 app/out/
 app/dist/
 app/test-results/
+
+# Sanitized fixtures stay local until reviewed
+app/test/fixtures/
