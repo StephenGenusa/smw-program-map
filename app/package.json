@@ -27,5 +27,23 @@
   },
   "dependencies": {
     "pixi.js": "^8.22.0"
+  },
+  "build": {
+    "appId": "local.smw.programmap",
+    "productName": "SMW Program Map",
+    "files": [
+      "out/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Development"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "publish": null
   }
 }
